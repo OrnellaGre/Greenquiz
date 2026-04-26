@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GreenQuiz</title>
+  <meta name="description" content="GreenQuiz sobre avec inscription et connexion.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/style.css') }}">
+  <script defer src="{{ url_for('static', filename='assets/app.js') }}"></script>
+</head>
+<body>
+<header class="wrap">
+  <nav aria-label="Navigation principale">
+    <a class="brand" href="{{ url_for('home') }}">GreenQuiz</a>
+    <ul>
+      <li><a href="{{ url_for('home') }}#quiz">Quiz</a></li>
+      {% if user %}
+      <li><a href="{{ url_for('account') }}">Mon compte</a></li>
+      <li><a href="{{ url_for('logout') }}">Deconnexion</a></li>
+      {% else %}
+      <li><a href="{{ url_for('login') }}">Connexion</a></li>
+      <li><a href="{{ url_for('register') }}">Inscription</a></li>
+      {% endif %}
+    </ul>
+    <button id="toggleTheme" type="button" aria-label="Basculer le mode sombre">Theme</button>
+  </nav>
+</header>
+<main class="wrap">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <p class="muted">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="wrap"><small>GreenQuiz - Flask + SQLite legers.</small></footer>
+</body>
+</html>
