@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Gestion des quiz</h1>
+<p><a href="{{ url_for('quizzes_new') }}">Creer un quiz</a></p>
+<form method="get">
+  <label for="q">Recherche par titre</label>
+  <input id="q" name="q" value="{{ q }}">
+  <p><button type="submit">Filtrer</button></p>
+</form>
+<section>
+  {% if quizzes %}
+    {% for quiz in quizzes %}
+    <article>
+      <h3>{{ quiz['titre'] }}</h3>
+      <p class="muted">{{ quiz['categorie'] }} | {{ quiz['difficulte'] }} | createur: {{ quiz['createur'] }}</p>
+      <p class="muted">{{ 'Public' if quiz['est_publique'] else 'Prive' }}</p>
+      <div class="actions">
+        <a href="{{ url_for('quiz_play', quiz_id=quiz['id']) }}">Jouer</a>
+        {% if user and (user['is_admin'] or user['id'] == quiz['id_createur']) %}
+          <a href="{{ url_for('quizzes_edit', quiz_id=quiz['id']) }}">Modifier</a>
+          <a href="{{ url_for('quizzes_delete', quiz_id=quiz['id']) }}">Supprimer</a>
+        {% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  {% else %}
+    <p>Aucun quiz trouve.</p>
+  {% endif %}
+  <div class="actions">
+    {% if page > 1 %}
+      <a href="{{ url_for('quizzes_list', page=page-1, q=q) }}">Page precedente</a>
+    {% endif %}
+    <span>Page {{ page }} / {{ total_pages }}</span>
+    {% if page < total_pages %}
+      <a href="{{ url_for('quizzes_list', page=page+1, q=q) }}">Page suivante</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

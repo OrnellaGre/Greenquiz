@@ -13,9 +13,14 @@
   <nav aria-label="Navigation principale">
     <a class="brand" href="{{ url_for('home') }}">GreenQuiz</a>
     <ul>
-      <li><a href="{{ url_for('home') }}#quiz">Quiz</a></li>
+      <li><a href="{{ url_for('home') }}">Accueil</a></li>
+      <li><a href="{{ url_for('quizzes_list') }}">Tous les quiz</a></li>
       {% if user %}
+      <li><a href="{{ url_for('quizzes_new') }}">Nouveau quiz</a></li>
       <li><a href="{{ url_for('account') }}">Mon compte</a></li>
+      {% if user["is_admin"] %}
+      <li><a href="{{ url_for('users_list') }}">Utilisateurs</a></li>
+      {% endif %}
       <li><a href="{{ url_for('logout') }}">Deconnexion</a></li>
       {% else %}
       <li><a href="{{ url_for('login') }}">Connexion</a></li>
@@ -35,6 +40,6 @@
   {% endwith %}
   {% block content %}{% endblock %}
 </main>
-<footer class="wrap"><small>GreenQuiz - Flask + SQLite legers.</small></footer>
+<footer class="wrap"><small>GreenQuiz - Flask + SQLite sobres.</small></footer>
 </body>
 </html>

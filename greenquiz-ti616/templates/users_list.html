@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Utilisateurs</h1>
+<p><a href="{{ url_for('users_new') }}">Creer un utilisateur</a></p>
+<form method="get">
+  <label for="q">Recherche</label>
+  <input id="q" name="q" value="{{ q }}">
+  <p><button type="submit">Filtrer</button></p>
+</form>
+<section>
+  {% if users %}
+    {% for item in users %}
+    <article>
+      <h3>{{ item['username'] }}</h3>
+      <p>{{ item['email'] }}</p>
+      <p class="muted">{{ 'Admin' if item['is_admin'] else 'Utilisateur' }}</p>
+      <div class="actions">
+        <a href="{{ url_for('users_edit', user_id=item['id']) }}">Modifier</a>
+        <a href="{{ url_for('users_delete', user_id=item['id']) }}">Supprimer</a>
+      </div>
+    </article>
+    {% endfor %}
+  {% else %}
+    <p>Aucun utilisateur trouve.</p>
+  {% endif %}
+  <div class="actions">
+    {% if page > 1 %}
+      <a href="{{ url_for('users_list', page=page-1, q=q) }}">Page precedente</a>
+    {% endif %}
+    <span>Page {{ page }} / {{ total_pages }}</span>
+    {% if page < total_pages %}
+      <a href="{{ url_for('users_list', page=page+1, q=q) }}">Page suivante</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

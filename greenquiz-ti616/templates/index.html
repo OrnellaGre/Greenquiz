@@ -1,18 +1,45 @@
 {% extends 'base.html' %}
 {% block content %}
 <section>
-  <h1>Site utile, sobre et fonctionnel</h1>
-  <p>Version optimisee avec peu de pages, peu de ressources et fonctions essentielles.</p>
+  <h1>Quiz publics GreenQuiz</h1>
+  <p>Les visiteurs peuvent jouer. Les utilisateurs connectes peuvent aussi publier leurs scores.</p>
 </section>
-<section id="quiz" aria-live="polite">
-  <h2>Mini Quiz Green IT</h2>
-  <p class="muted">Quiz local, sans API externe.</p>
-  <article>
-    <h3 id="question">Chargement...</h3>
-    <div id="choices" class="actions"></div>
-    <p id="feedback" class="muted"></p>
-    <p><button id="nextBtn" type="button">Question suivante</button></p>
-  </article>
-  <p><strong>Score:</strong> <span id="score">0</span>/<span id="total">0</span></p>
+
+<section>
+  <h2>Rechercher</h2>
+  <form method="get">
+    <label for="q">Texte</label>
+    <input id="q" name="q" value="{{ filters['q'] }}">
+    <label for="difficulte">Difficulte</label>
+    <input id="difficulte" name="difficulte" placeholder="facile/moyen/difficile" value="{{ filters['difficulte'] }}">
+    <label for="categorie">Categorie</label>
+    <input id="categorie" name="categorie" value="{{ filters['categorie'] }}">
+    <p><button type="submit">Filtrer</button></p>
+  </form>
+</section>
+
+<section>
+  <h2>Quiz disponibles</h2>
+  {% if quizzes %}
+    {% for quiz in quizzes %}
+    <article>
+      <h3>{{ quiz['titre'] }}</h3>
+      <p>{{ quiz['description'] }}</p>
+      <p class="muted">Categorie: {{ quiz['categorie'] }} | Difficulte: {{ quiz['difficulte'] }}</p>
+      <p><a href="{{ url_for('quiz_play', quiz_id=quiz['id']) }}">Jouer ce quiz</a></p>
+    </article>
+    {% endfor %}
+  {% else %}
+    <p>Aucun quiz ne correspond a la recherche.</p>
+  {% endif %}
+  <div class="actions">
+    {% if page > 1 %}
+      <a href="{{ url_for('home', page=page-1, q=filters['q'], difficulte=filters['difficulte'], categorie=filters['categorie']) }}">Page precedente</a>
+    {% endif %}
+    <span>Page {{ page }} / {{ total_pages }}</span>
+    {% if page < total_pages %}
+      <a href="{{ url_for('home', page=page+1, q=filters['q'], difficulte=filters['difficulte'], categorie=filters['categorie']) }}">Page suivante</a>
+    {% endif %}
+  </div>
 </section>
 {% endblock %}

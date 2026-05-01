@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Suppression quiz</h1>
+<section>
+  <p>Confirmer la suppression du quiz <strong>{{ quiz['titre'] }}</strong>.</p>
+  <form method="post">
+    <label>
+      <input type="checkbox" name="confirm" value="yes" required>
+      Je confirme la suppression
+    </label>
+    <p><button type="submit">Supprimer definitivement</button></p>
+  </form>
+</section>
+{% endblock %}

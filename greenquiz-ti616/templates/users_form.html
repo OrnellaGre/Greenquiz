@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Modifier utilisateur' if edit_user else 'Nouvel utilisateur' }}</h1>
+<form method="post">
+  <label for="username">Nom utilisateur</label>
+  <input id="username" name="username" value="{{ edit_user['username'] if edit_user else '' }}" required>
+  <label for="email">Email</label>
+  <input id="email" type="email" name="email" value="{{ edit_user['email'] if edit_user else '' }}" required>
+  <label for="password">{{ 'Nouveau mot de passe (optionnel)' if edit_user else 'Mot de passe' }}</label>
+  <input id="password" type="password" name="password" {% if not edit_user %}required{% endif %}>
+  <p>
+    <label>
+      <input type="checkbox" name="is_admin" {% if edit_user and edit_user['is_admin'] %}checked{% endif %}>
+      Administrateur
+    </label>
+  </p>
+  <p><button type="submit">Enregistrer</button></p>
+</form>
+{% endblock %}
