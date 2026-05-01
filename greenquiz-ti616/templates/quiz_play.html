@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ quiz['titre'] }}</h1>
+<p>{{ quiz['description'] }}</p>
+
+<section>
+  <h2>Repondre au quiz</h2>
+  <form method="post" action="{{ url_for('quiz_submit', quiz_id=quiz['id']) }}">
+    {% for q in questions %}
+    <article>
+      <h3>{{ loop.index }}. {{ q['texte'] }} ({{ q['points'] }} pt)</h3>
+      {% if q['type'] == 'QCM' %}
+        {% for choice in q['choices'] %}
+        <label>
+          <input type="radio" name="q_{{ q['id'] }}" value="{{ choice }}" required>
+          {{ choice }}
+        </label>
+        {% endfor %}
+      {% elif q['type'] == 'vrai/faux' %}
+        <label><input type="radio" name="q_{{ q['id'] }}" value="vrai" required> Vrai</label>
+        <label><input type="radio" name="q_{{ q['id'] }}" value="faux" required> Faux</label>
+      {% else %}
+        <input name="q_{{ q['id'] }}" placeholder="Votre reponse" required>
+      {% endif %}
+    </article>
+    {% endfor %}
+    <p><button type="submit">Valider mes reponses</button></p>
+  </form>
+</section>
+
+<section>
+  <h2>Classement (utilisateurs connectes)</h2>
+  {% if leaderboard %}
+    {% for row in leaderboard %}
+    <p>{{ row['username'] }} - {{ row['score'] }}</p>
+    {% endfor %}
+  {% else %}
+    <p>Aucun score enregistre pour ce quiz.</p>
+  {% endif %}
+</section>
+{% endblock %}

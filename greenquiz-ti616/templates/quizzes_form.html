@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Modifier quiz' if edit_quiz else 'Nouveau quiz' }}</h1>
+<form method="post">
+  <label for="titre">Titre</label>
+  <input id="titre" name="titre" value="{{ edit_quiz['titre'] if edit_quiz else '' }}" required>
+  <label for="description">Description</label>
+  <textarea id="description" name="description" rows="4" required>{{ edit_quiz['description'] if edit_quiz else '' }}</textarea>
+  <label for="difficulte">Difficulte</label>
+  <input id="difficulte" name="difficulte" placeholder="facile/moyen/difficile" value="{{ edit_quiz['difficulte'] if edit_quiz else '' }}" required>
+  <label for="categorie">Categorie</label>
+  <input id="categorie" name="categorie" value="{{ edit_quiz['categorie'] if edit_quiz else '' }}" required>
+  <p>
+    <label>
+      <input type="checkbox" name="est_publique" {% if not edit_quiz or edit_quiz['est_publique'] %}checked{% endif %}>
+      Quiz public
+    </label>
+  </p>
+  <label for="questions_json">Questions (JSON)</label>
+  <textarea id="questions_json" name="questions_json" rows="12" required>{{ questions_json }}</textarea>
+  <p class="muted">Format: [{"texte":"...","type":"QCM","reponses_possibles":["a","b"],"reponse_correcte":"a","points":1}]</p>
+  <p><button type="submit">Enregistrer</button></p>
+</form>
+{% endblock %}
