@@ -20,16 +20,16 @@
         <label><input type="radio" name="q_{{ q['id'] }}" value="vrai" required> Vrai</label>
         <label><input type="radio" name="q_{{ q['id'] }}" value="faux" required> Faux</label>
       {% else %}
-        <input name="q_{{ q['id'] }}" placeholder="Votre reponse" required>
+        <input name="q_{{ q['id'] }}" placeholder="Votre réponse" required>
       {% endif %}
     </article>
     {% endfor %}
-    <p><button type="submit">Valider mes reponses</button></p>
+    <p><button type="submit">Valider mes réponses</button></p>
   </form>
 </section>
 
 <section>
-  <h2>Classement (utilisateurs connectes)</h2>
+  <h2>Classement (utilisateurs connectés)</h2>
   {% if leaderboard %}
     {% for row in leaderboard %}
     <p>{{ row['username'] }} - {{ row['score'] }}</p>

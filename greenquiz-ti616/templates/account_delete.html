@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Suppression utilisateur</h1>
+<h1>Supprimer mon compte</h1>
 <section>
-  <p>Confirmer la suppression de <strong>{{ target['username'] }}</strong>.</p>
+  <p>Cette action est définitive. Confirmer la suppression du compte <strong>{{ user['username'] }}</strong>.</p>
   <form method="post">
     <label>
       <input type="checkbox" name="confirm" value="yes" required>
-      Je confirme la suppression
+      Je confirme la suppression de mon compte
     </label>
     <p><button type="submit">Supprimer définitivement</button></p>
   </form>

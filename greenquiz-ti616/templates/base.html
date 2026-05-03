@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>GreenQuiz</title>
   <meta name="description" content="GreenQuiz sobre avec inscription et connexion.">
-  <link rel="stylesheet" href="{{ url_for('static', filename='assets/style.css') }}">
+  <style>{{ site_css|safe }}</style>
   <script defer src="{{ url_for('static', filename='assets/app.js') }}"></script>
 </head>
 <body>
@@ -21,13 +21,13 @@
       {% if user["is_admin"] %}
       <li><a href="{{ url_for('users_list') }}">Utilisateurs</a></li>
       {% endif %}
-      <li><a href="{{ url_for('logout') }}">Deconnexion</a></li>
+      <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
       {% else %}
       <li><a href="{{ url_for('login') }}">Connexion</a></li>
       <li><a href="{{ url_for('register') }}">Inscription</a></li>
       {% endif %}
     </ul>
-    <button id="toggleTheme" type="button" aria-label="Basculer le mode sombre">Theme</button>
+    <button id="toggleTheme" type="button" aria-label="Basculer le mode sombre">Thème</button>
   </nav>
 </header>
 <main class="wrap">

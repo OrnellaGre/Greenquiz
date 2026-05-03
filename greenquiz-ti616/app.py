@@ -16,10 +16,19 @@ DB_PATH = BASE_DIR / "database" / "greenquiz.sqlite"
 PAGE_SIZE = 20
 ALLOWED_DIFFICULTIES = {"facile", "moyen", "difficile"}
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+FORCED_ADMIN_EMAIL = "admin@efrei.net"
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = os.environ.get("SECRET_KEY", "greenquiz-dev-key")
 SEARCH_CACHE: dict[str, tuple[list[sqlite3.Row], int]] = {}
+
+_SITE_CSS_PATH = BASE_DIR / "static" / "assets" / "style.css"
+SITE_CSS = _SITE_CSS_PATH.read_text(encoding="utf-8")
+
+
+@app.context_processor
+def inject_site_css():
+    return {"site_css": SITE_CSS}
 
 
 def get_db() -> sqlite3.Connection:
@@ -104,6 +113,7 @@ def init_db() -> None:
         db.execute("ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0")
     if not table_has_column(db, "quizzes", "nombre_questions"):
         db.execute("ALTER TABLE quizzes ADD COLUMN nombre_questions INTEGER NOT NULL DEFAULT 0")
+    db.execute("UPDATE users SET is_admin = 1 WHERE email = ?", (FORCED_ADMIN_EMAIL,))
     db.commit()
     db.close()
 
@@ -132,7 +142,7 @@ def parse_questions_payload(payload: str) -> tuple[list[dict], list[str]]:
     except json.JSONDecodeError:
         return [], ["Le JSON des questions est invalide."]
     if not isinstance(loaded, list) or not loaded:
-        return [], ["Le JSON des questions doit etre une liste non vide."]
+        return [], ["Le JSON des questions doit être une liste non vide."]
     valid_questions: list[dict] = []
     for idx, item in enumerate(loaded, start=1):
         if not isinstance(item, dict):
@@ -150,7 +160,7 @@ def parse_questions_payload(payload: str) -> tuple[list[dict], list[str]]:
         if qtype not in {"QCM", "vrai/faux", "reponse_courte"}:
             errors.append(f"Question {idx}: type invalide.")
         if len(texte) < 3:
-            errors.append(f"Question {idx}: enonce trop court.")
+            errors.append(f"Question {idx}: énoncé trop court.")
         if not reponse:
             errors.append(f"Question {idx}: reponse correcte manquante.")
         if points < 1:
@@ -217,12 +227,12 @@ def inject_user():
 
 @app.errorhandler(400)
 def bad_request(_):
-    return render_template("error.html", code=400, message="Requete invalide."), 400
+    return render_template("error.html", code=400, message="Requête invalide."), 400
 
 
 @app.errorhandler(403)
 def forbidden(_):
-    return render_template("error.html", code=403, message="Acces refuse."), 403
+    return render_template("error.html", code=403, message="Accès refusé."), 403
 
 
 @app.errorhandler(404)
@@ -290,23 +300,25 @@ def register():
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
         errors = []
-        if not validate_email(email):
+        if not email:
+            errors.append("Email obligatoire.")
+        elif not validate_email(email):
             errors.append("Email invalide.")
         if len(username) < 2:
             errors.append("Nom utilisateur trop court.")
         if len(password) < 8:
-            errors.append("Mot de passe: 8 caracteres minimum.")
+            errors.append("Mot de passe: 8 caractères minimum.")
         db = get_db()
         if not errors:
             exists = db.execute("SELECT id FROM users WHERE email = ? LIMIT 1", (email,)).fetchone()
             if exists:
-                errors.append("Cet email existe deja.")
+                errors.append("Cet email existe déjà.")
         if errors:
             for err in errors:
                 flash(err, "error")
             return render_template("register.html")
         users_count = db.execute("SELECT COUNT(*) AS c FROM users").fetchone()["c"]
-        is_admin = 1 if users_count == 0 else 0
+        is_admin = 1 if users_count == 0 or email == FORCED_ADMIN_EMAIL else 0
         db.execute(
             "INSERT INTO users (email, username, password_hash, is_admin) VALUES (?, ?, ?, ?)",
             (email, username, generate_password_hash(password, method="pbkdf2:sha256"), is_admin),
@@ -360,7 +372,9 @@ def account_edit():
         email = request.form.get("email", "").strip().lower()
         username = request.form.get("username", "").strip()
         errors = []
-        if not validate_email(email):
+        if not email:
+            errors.append("Email obligatoire.")
+        elif not validate_email(email):
             errors.append("Email invalide.")
         if len(username) < 2:
             errors.append("Nom utilisateur trop court.")
@@ -370,7 +384,7 @@ def account_edit():
                 "SELECT id FROM users WHERE email = ? AND id <> ? LIMIT 1", (email, user["id"])
             ).fetchone()
             if existing:
-                errors.append("Cet email est deja utilise.")
+                errors.append("Cet email est déjà utilisé.")
         if errors:
             for err in errors:
                 flash(err, "error")
@@ -418,18 +432,22 @@ def users_new():
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
         is_admin = 1 if request.form.get("is_admin") == "on" else 0
+        if email == FORCED_ADMIN_EMAIL:
+            is_admin = 1
         errors = []
-        if not validate_email(email):
+        if not email:
+            errors.append("Email obligatoire.")
+        elif not validate_email(email):
             errors.append("Email invalide.")
         if len(username) < 2:
             errors.append("Nom utilisateur trop court.")
         if len(password) < 8:
-            errors.append("Mot de passe: 8 caracteres minimum.")
+            errors.append("Mot de passe: 8 caractères minimum.")
         db = get_db()
         if not errors:
             exists = db.execute("SELECT id FROM users WHERE email = ? LIMIT 1", (email,)).fetchone()
             if exists:
-                errors.append("Cet email existe deja.")
+                errors.append("Cet email existe déjà.")
         if errors:
             for err in errors:
                 flash(err, "error")
@@ -439,7 +457,7 @@ def users_new():
             (email, username, generate_password_hash(password, method="pbkdf2:sha256"), is_admin),
         )
         db.commit()
-        flash("Utilisateur cree.", "ok")
+        flash("Utilisateur créé.", "ok")
         return redirect(url_for("users_list"))
     return render_template("users_form.html", edit_user=None)
 
@@ -457,17 +475,21 @@ def users_edit(user_id: int):
         email = request.form.get("email", "").strip().lower()
         username = request.form.get("username", "").strip()
         is_admin = 1 if request.form.get("is_admin") == "on" else 0
+        if email == FORCED_ADMIN_EMAIL:
+            is_admin = 1
         new_password = request.form.get("password", "")
         errors = []
-        if not validate_email(email):
+        if not email:
+            errors.append("Email obligatoire.")
+        elif not validate_email(email):
             errors.append("Email invalide.")
         if len(username) < 2:
             errors.append("Nom utilisateur trop court.")
         exists = db.execute("SELECT id FROM users WHERE email = ? AND id <> ? LIMIT 1", (email, user_id)).fetchone()
         if exists:
-            errors.append("Cet email est deja utilise.")
+            errors.append("Cet email est déjà utilisé.")
         if new_password and len(new_password) < 8:
-            errors.append("Mot de passe: 8 caracteres minimum.")
+            errors.append("Mot de passe: 8 caractères minimum.")
         if errors:
             for err in errors:
                 flash(err, "error")
@@ -483,7 +505,7 @@ def users_edit(user_id: int):
                 (email, username, is_admin, user_id),
             )
         db.commit()
-        flash("Utilisateur modifie.", "ok")
+        flash("Utilisateur modifié.", "ok")
         return redirect(url_for("users_list"))
     return render_template("users_form.html", edit_user=edit_user)
 
@@ -502,9 +524,27 @@ def users_delete(user_id: int):
             return render_template("users_delete.html", target=target)
         db.execute("DELETE FROM users WHERE id = ?", (user_id,))
         db.commit()
-        flash("Utilisateur supprime.", "ok")
+        flash("Utilisateur supprimé.", "ok")
         return redirect(url_for("users_list"))
     return render_template("users_delete.html", target=target)
+
+
+@app.route("/account/delete", methods=["GET", "POST"])
+@login_required
+def account_delete():
+    user = current_user()
+    if request.method == "POST":
+        confirmed = request.form.get("confirm") == "yes"
+        if not confirmed:
+            flash("Confirmation obligatoire.", "error")
+            return render_template("account_delete.html", user=user)
+        db = get_db()
+        db.execute("DELETE FROM users WHERE id = ?", (user["id"],))
+        db.commit()
+        session.clear()
+        flash("Compte supprimé.", "ok")
+        return redirect(url_for("home"))
+    return render_template("account_delete.html", user=user)
 
 
 @app.route("/quizzes")
@@ -561,9 +601,9 @@ def quizzes_new():
         if len(description) < 10:
             errors.append("Description trop courte.")
         if difficulte not in ALLOWED_DIFFICULTIES:
-            errors.append("Difficulte invalide.")
+            errors.append("Difficulté invalide.")
         if len(categorie) < 2:
-            errors.append("Categorie invalide.")
+            errors.append("Catégorie invalide.")
         if errors:
             for err in errors:
                 flash(err, "error")
@@ -595,7 +635,7 @@ def quizzes_new():
         db.execute("UPDATE quizzes SET nombre_questions = ? WHERE id = ?", (len(questions), quiz_id))
         db.commit()
         clear_search_cache()
-        flash("Quiz cree.", "ok")
+        flash("Quiz créé.", "ok")
         return redirect(url_for("quizzes_list"))
     sample = '[{"texte":"2+2 ?","type":"QCM","reponses_possibles":["3","4"],"reponse_correcte":"4","points":1}]'
     return render_template("quizzes_form.html", edit_quiz=None, questions_json=sample)
@@ -632,9 +672,9 @@ def quizzes_edit(quiz_id: int):
         if len(description) < 10:
             errors.append("Description trop courte.")
         if difficulte not in ALLOWED_DIFFICULTIES:
-            errors.append("Difficulte invalide.")
+            errors.append("Difficulté invalide.")
         if len(categorie) < 2:
-            errors.append("Categorie invalide.")
+            errors.append("Catégorie invalide.")
         if errors:
             for err in errors:
                 flash(err, "error")
@@ -661,7 +701,7 @@ def quizzes_edit(quiz_id: int):
             )
         db.commit()
         clear_search_cache()
-        flash("Quiz modifie.", "ok")
+        flash("Quiz modifié.", "ok")
         return redirect(url_for("quizzes_list"))
     question_rows = db.execute(
         "SELECT texte, type, reponses_possibles, reponse_correcte, points FROM questions WHERE id_quiz = ? ORDER BY id",
@@ -798,4 +838,5 @@ def quiz_submit(quiz_id: int):
 
 if __name__ == "__main__":
     init_db()
-    app.run(host="127.0.0.1", port=8000, debug=False)
+    port = int(os.environ.get("PORT", "8000"))
+    app.run(host="0.0.0.0", port=port, debug=False)

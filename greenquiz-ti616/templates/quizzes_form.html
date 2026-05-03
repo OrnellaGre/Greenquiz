@@ -6,9 +6,9 @@
   <input id="titre" name="titre" value="{{ edit_quiz['titre'] if edit_quiz else '' }}" required>
   <label for="description">Description</label>
   <textarea id="description" name="description" rows="4" required>{{ edit_quiz['description'] if edit_quiz else '' }}</textarea>
-  <label for="difficulte">Difficulte</label>
+  <label for="difficulte">Difficulté</label>
   <input id="difficulte" name="difficulte" placeholder="facile/moyen/difficile" value="{{ edit_quiz['difficulte'] if edit_quiz else '' }}" required>
-  <label for="categorie">Categorie</label>
+  <label for="categorie">Catégorie</label>
   <input id="categorie" name="categorie" value="{{ edit_quiz['categorie'] if edit_quiz else '' }}" required>
   <p>
     <label>

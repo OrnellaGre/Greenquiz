@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Gestion des quiz</h1>
-<p><a href="{{ url_for('quizzes_new') }}">Creer un quiz</a></p>
+<p><a href="{{ url_for('quizzes_new') }}">Créer un quiz</a></p>
 <form method="get">
   <label for="q">Recherche par titre</label>
   <input id="q" name="q" value="{{ q }}">
@@ -28,7 +28,7 @@
   {% endif %}
   <div class="actions">
     {% if page > 1 %}
-      <a href="{{ url_for('quizzes_list', page=page-1, q=q) }}">Page precedente</a>
+      <a href="{{ url_for('quizzes_list', page=page-1, q=q) }}">Page précédente</a>
     {% endif %}
     <span>Page {{ page }} / {{ total_pages }}</span>
     {% if page < total_pages %}
