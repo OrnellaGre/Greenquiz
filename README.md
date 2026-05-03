@@ -1,36 +1,80 @@
-# GreenQuiz - TI616 Mini Projet
+# GreenQuiz
 
-GreenQuiz est une plateforme educative sobre pour sensibiliser au Green IT via des quiz.
-Le projet est maintenant en **Python Flask + SQLite**, avec une architecture legere,
-facile a maintenir, et limitee aux fonctions vraiment utiles.
+GreenQuiz est une application web educative dediee au Green IT.  
+Le projet permet de creer, gerer et jouer des quiz autour des bonnes pratiques numeriques responsables.  
+L'architecture est volontairement simple et legere pour reduire l'empreinte technique (Flask, SQLite, front natif).  
+L'objectif est de proposer une plateforme utile, maintenable et sobre en ressources.
 
-## Fonctionnalites
-- Inscription utilisateur
-- Connexion / deconnexion
-- Page compte (profil connecte)
-- Mini quiz Green IT en front (JS local)
+## Site deploye
 
-## Stack et justification Green IT
-- `Flask` : framework minimal, peu de code boilerplate.
-- `SQLite` : base locale legere, sans serveur externe.
-- `HTML/CSS/JS natifs` : peu de dependances, peu de requetes HTTP.
-- `System fonts` : pas d'appel a des polices externes.
+- Application en ligne : [https://greenproject-1f1e.onrender.com/](https://greenproject-1f1e.onrender.com/)
+
+## Equipe et roles
+
+- `Hugo W` - Coordination projet, ..............
+- `Charles Y` - .............
+- `Ornella T` - .......
+
+
+## Stack technique et justification Green IT
+
+- `Python + Flask` : framework minimal, faible surcouche, moins de complexite et de dependances.
+- `SQLite` : base legere sans serveur dedie, adaptee a un projet pedagogique avec faible cout infra.
+- `HTML/CSS/JS natifs` : pas de framework front lourd, moins de JavaScript execute et moins de transfert reseau.
+- `Render` : deploiement simple et rapide, mutualisation de l'infrastructure.
+- `Werkzeug security` : hash des mots de passe pour la securite sans service externe additionnel.
+
+## Installation et lancement local
+
+### 1) Cloner le projet
+
+```bash
+git clone <URL_DU_REPO>
+cd GreenProject
+```
+
+### 2) Installer les dependances
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+### 3) Lancer l'application
+
+```bash
+python app.py
+```
+
+### 4) Ouvrir dans le navigateur
+
+- `http://127.0.0.1:8000`
 
 ## Structure du depot
-- `app.py` : application Flask + routes + initialisation DB
-- `templates/` : pages HTML (base, accueil, auth, compte)
-- `static/assets/` : CSS + JS minimaux
-- `database/greenquiz.sqlite` : base locale
-- `docs/` : rapport et preuves de mesure
 
-## Lancer le projet
-1. Installer les dependances:
-   - `python3 -m pip install -r requirements.txt`
-2. Lancer le serveur:
-   - `python3 app.py`
-3. Ouvrir:
-   - `http://127.0.0.1:8000`
+```text
+GreenProject/
+|- app.py                    # Application Flask (routes, auth, logique quiz, init DB)
+|- requirements.txt          # Dependances Python
+|- README.md                 # Documentation du projet
+|- database/
+|  |- greenquiz.sqlite       # Base SQLite locale
+|- static/
+|  |- assets/
+|     |- style.css           # Styles globaux
+|     |- app.js              # JS client (interactions UI)
+|- templates/
+|  |- base.html              # Layout principal
+|  |- index.html             # Accueil + listing quiz publics
+|  |- login.html             # Connexion
+|  |- register.html          # Inscription
+|  |- account*.html          # Espace personnel (profil/modification/suppression)
+|  |- users_*.html           # Ecran admin de gestion utilisateurs
+|  |- quizzes_*.html         # Creation/edition/suppression quiz
+|- docs/
+|  |- rapport.pdf            # Rapport final (a deposer ici)
+```
 
-## Remarques
-- La base SQLite est creee automatiquement au premier lancement.
-- Le mot de passe est stocke avec hash (`werkzeug.security`).
+
+## Lien vers le rapport PDF
+
+- Rapport : 
