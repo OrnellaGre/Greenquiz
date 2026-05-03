@@ -11,9 +11,9 @@ L'objectif est de proposer une plateforme utile, maintenable et sobre en ressour
 
 ## Equipe et roles
 
-- `Hugo W` - Coordination projet, ..............
-- `Charles Y` - .............
-- `Ornella T` - .......
+- `Hugo W` - Coordination projet, développement full-stack, rédaction
+- `Charles Y` - Développement full-stack, rédaction
+- `Ornella T` - Rédaction, Organisation
 
 
 ## Stack technique et justification Green IT
@@ -29,7 +29,7 @@ L'objectif est de proposer une plateforme utile, maintenable et sobre en ressour
 ### 1) Cloner le projet
 
 ```bash
-git clone <URL_DU_REPO>
+git clone https://github.com/HugoWiltEFREI/Greenquiz
 cd GreenProject
 ```
 
@@ -71,10 +71,10 @@ GreenProject/
 |  |- users_*.html           # Ecran admin de gestion utilisateurs
 |  |- quizzes_*.html         # Creation/edition/suppression quiz
 |- docs/
-|  |- rapport.pdf            # Rapport final (a deposer ici)
+|  |- rapport.pdf            # Rapport final
 ```
 
 
 ## Lien vers le rapport PDF
 
-- Rapport : 
+- Rapport : SOON
