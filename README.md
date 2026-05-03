@@ -1,11 +1,11 @@
 # GreenQuiz
 
-GreenQuiz est une application web educative dediee au Green IT.  
-Le projet permet de creer, gerer et jouer des quiz autour des bonnes pratiques numeriques responsables.  
-L'architecture est volontairement simple et legere pour reduire l'empreinte technique (Flask, SQLite, front natif).  
+GreenQuiz est une application web éducative dédiée au Green IT.  
+Le projet permet de créer, gérer et jouer des quiz autour des bonnes pratiques numériques responsables.  
+L'architecture est volontairement simple et légère pour réduire l'empreinte technique (Flask, SQLite, front natif).  
 L'objectif est de proposer une plateforme utile, maintenable et sobre en ressources.
 
-## Site deploye
+## Site deployé
 
 - Application en ligne : [https://greenproject-1f1e.onrender.com/](https://greenproject-1f1e.onrender.com/)
 
@@ -18,11 +18,11 @@ L'objectif est de proposer une plateforme utile, maintenable et sobre en ressour
 
 ## Stack technique et justification Green IT
 
-- `Python + Flask` : framework minimal, faible surcouche, moins de complexite et de dependances.
-- `SQLite` : base legere sans serveur dedie, adaptee a un projet pedagogique avec faible cout infra.
-- `HTML/CSS/JS natifs` : pas de framework front lourd, moins de JavaScript execute et moins de transfert reseau.
-- `Render` : deploiement simple et rapide, mutualisation de l'infrastructure.
-- `Werkzeug security` : hash des mots de passe pour la securite sans service externe additionnel.
+- `Python + Flask` : framework minimal, faible surcouche, moins de compléxite et de dépendances.
+- `SQLite` : base légère sans serveur dédie, adaptée à un projet pedagogique avec faible cout infra.
+- `HTML/CSS/JS natifs` : pas de framework front lourd, moins de JavaScript exécuté et moins de transfert réseau.
+- `Render` : déploiement simple et rapide, mutualisation de l'infrastructure.
+- `Werkzeug security` : hash des mots de passe pour la sécurité sans service externe additionnel.
 
 ## Installation et lancement local
 
@@ -33,7 +33,7 @@ git clone https://github.com/HugoWiltEFREI/Greenquiz
 cd GreenProject
 ```
 
-### 2) Installer les dependances
+### 2) Installer les dépendances
 
 ```bash
 python -m pip install -r requirements.txt
